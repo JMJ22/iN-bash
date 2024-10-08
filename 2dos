@@ -1,0 +1,8 @@
+# Cria o usuário
+#useradd ze-freitas
+
+# Define a senha do usuário
+#echo -e "abobrinha\nabobrinha" | passwd ze-freitas
+
+cat /etc/passwd | grep ze-freitas
+
