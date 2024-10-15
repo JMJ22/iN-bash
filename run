@@ -33,10 +33,10 @@ for ip in "${ips[@]}"; do
   fi
 
   # Captura o hostname remoto diretamente do servidor remoto via SSH
-  hostname_remote=$(ssh -q -o ConnectTimeout=60 $user@$ip 'hostname')
+  hostname_remote=$(ssh -q -o ConnectTimeout=3 $user@$ip 'hostname')
 
   # Executa o comando ou o conteúdo do arquivo 'task-list' no servidor remoto e armazena a saída
-  output=$(ssh -q -o ConnectTimeout=60 $user@$ip "bash -c '$command' 2>&1")  # Captura stderr e stdout
+  output=$(ssh -q -o ConnectTimeout=3 $user@$ip "bash -c '$command' 2>&1")  # Captura stderr e stdout
 
   # Exibe o cabeçalho
   echo -e "${GREEN}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
