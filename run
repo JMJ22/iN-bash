@@ -34,7 +34,7 @@ for ip in "${ips[@]}"; do
 
   # Se a conexão foi bem-sucedida, executa o comando
   output=$(ssh -q "$user@$ip" "
-    hostname; nice -n -10 ionice -c2 bash -c '$command' 2>&1
+    hostname; nice -n -15 ionice -c2 -n1 bash -c '$command' 2>&1
   ")
 
   # Exibe o cabeçalho
