@@ -2,16 +2,16 @@
 clear
 
 # Define o usuário a partir do arquivo 'user'
-user=$(cat user)
+user=$(<user)  # Leitura mais rápida do usuário
 
 # Lê os IPs do arquivo 'target'
-ips=( $(cat target) )
+mapfile -t ips < target  # Leitura direta para um array, mais eficiente
 
 # Verifica se algum comando foi passado como argumento
 if [ $# -gt 0 ]; then
   command="$@"
 else
-  command=$(cat 2dos)
+  command=$(<2dos)  # Leitura mais rápida do conteúdo do arquivo
 fi
 
 # Cores para destaque
@@ -22,31 +22,34 @@ NC='\033[0m' # Sem cor
 
 # Faz um loop sobre os IPs
 for ip in "${ips[@]}"; do
-
-  # Verifica a conexão SSH antes de executar qualquer coisa
-  ssh -q -o ConnectTimeout=3 $user@$ip "exit"
+  # Verifica se o servidor está acessível com um teste básico de conexão
+  ssh -o ConnectTimeout=3 -q "$user@$ip" exit
   if [ $? -ne 0 ]; then
+    # Mensagem de servidor inacessível
     echo -e "${RED}------------------------------[ Servidor Inacessível - $ip ]------------------------------${NC}\n"
     echo ""
     echo ""
-    continue
+    continue  # Continua para o próximo IP
   fi
 
-  # Captura o hostname remoto diretamente do servidor remoto via SSH
-  hostname_remote=$(ssh -q -o ConnectTimeout=3 $user@$ip 'hostname')
-
-  # Executa o comando ou o conteúdo do arquivo 'task-list' no servidor remoto e armazena a saída
-  output=$(ssh -q -o ConnectTimeout=3 $user@$ip "bash -c '$command' 2>&1")  # Captura stderr e stdout
+  # Se a conexão foi bem-sucedida, executa o comando
+  output=$(ssh -q "$user@$ip" "
+    hostname; nice -n -10 ionice -c2 bash -c '$command' 2>&1
+  ")
 
   # Exibe o cabeçalho
+  hostname_remote=$(echo "$output" | head -n 1)  # A primeira linha da saída é o hostname
   echo -e "${GREEN}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
   echo ""
 
-  # Verifica se a saída está vazia
-  if [ -z "$output" ]; then
+  # Remove o hostname da saída
+  command_output=$(echo "$output" | tail -n +2)  # Remove a primeira linha (hostname)
+
+  # Verifica se há saída do comando
+  if [ -z "$command_output" ]; then
     echo -e "${GRAY}Sem saída para o comando.${NC}"
   else
-    echo "$output"  # Exibe a saída do comando
+    echo "$command_output"  # Exibe a saída do comando
   fi
 
   # Adiciona uma linha em branco após a execução de cada bloco
