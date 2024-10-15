@@ -33,25 +33,22 @@ for ip in "${ips[@]}"; do
   fi
 
   # Captura o hostname remoto diretamente do servidor remoto via SSH
-  hostname_remote=$(ssh -q -o ConnectTimeout=3 $user@$ip 'hostname')
+  hostname_remote=$(ssh -q -o ConnectTimeout=60 $user@$ip 'hostname')
 
-  # Executa o comando ou o conteúdo do arquivo 'task-list' no servidor remoto
-  output=$(ssh -q -o ConnectTimeout=3 $user@$ip "bash -c '$command'")
+  # Executa o comando ou o conteúdo do arquivo 'task-list' no servidor remoto e armazena a saída
+  output=$(ssh -q -o ConnectTimeout=60 $user@$ip "bash -c '$command' 2>&1")  # Captura stderr e stdout
 
-  # Verifica se a saída está vazia e ajusta a cor do cabeçalho
+  # Exibe o cabeçalho
+  echo -e "${GREEN}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
+  echo ""
+
+  # Verifica se a saída está vazia
   if [ -z "$output" ]; then
-    # Exibe o cabeçalho em amarelo se a saída estiver vazia
-    echo -e "${GRAY}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
-    echo ""
-    echo ""
+    echo -e "${GRAY}Sem saída para o comando.${NC}"
   else
-    # Exibe o cabeçalho em verde se houver saída
-    echo -e "${GREEN}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
-    echo ""
     echo "$output"  # Exibe a saída do comando
   fi
 
   # Adiciona uma linha em branco após a execução de cada bloco
   echo ""
 done
-
