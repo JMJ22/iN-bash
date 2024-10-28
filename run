@@ -1,57 +1,57 @@
 #!/bin/bash
 clear
 
-# Define o usuário a partir do arquivo 'user'
-user=$(<user)  # Leitura mais rápida do usuário
+# Reads the 'user' file
+user=$(<user)  # Efficient reading of the user
 
-# Lê os IPs do arquivo 'target'
-mapfile -t ips < target  # Leitura direta para um array, mais eficiente
+# Reads the IPs from the 'target' file
+mapfile -t ips < target  # Direct read into an array, more efficient.
 
-# Verifica se algum comando foi passado como argumento
+# Checks if any command was passed as an argument.
 if [ $# -gt 0 ]; then
   command="$@"
 else
-  command=$(<2dos)  # Leitura mais rápida do conteúdo do arquivo
+  command=$(<2dos)  # Faster reading of the file's content.
 fi
 
-# Cores para destaque
+# Colors for highlighting
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 GRAY='\033[0;90m'
 NC='\033[0m' # Sem cor
 
-# Faz um loop sobre os IPs
+# Loops over the IPs
 for ip in "${ips[@]}"; do
-  # Verifica se o servidor está acessível com um teste básico de conexão
+  # Checks if the server is accessible with a basic connection test.
   ssh -o ConnectTimeout=3 -q "$user@$ip" exit
   if [ $? -ne 0 ]; then
-    # Mensagem de servidor inacessível
-    echo -e "${RED}------------------------------[ Servidor Inacessível - $ip ]------------------------------${NC}\n"
+    # Server inaccessible message
+    echo -e "${RED}------------------------------[ Inaccessible Server - $ip ]------------------------------${NC}\n"
     echo ""
     echo ""
-    continue  # Continua para o próximo IP
+    continue  # Proceed to the next IP.
   fi
 
-  # Se a conexão foi bem-sucedida, executa o comando
+  # If the connection is successful, execute the command:
   output=$(ssh -q "$user@$ip" "
     hostname; nice -n -15 ionice -c2 -n1 bash -c '$command' 2>&1
   ")
 
-  # Exibe o cabeçalho
+  # Displays the header
   hostname_remote=$(echo "$output" | head -n 1)  # A primeira linha da saída é o hostname
   echo -e "${GREEN}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
   echo ""
 
-  # Remove o hostname da saída
-  command_output=$(echo "$output" | tail -n +2)  # Remove a primeira linha (hostname)
+  # Remove the hostname from the output.
+  command_output=$(echo "$output" | tail -n +2)  # Remove the first line. (hostname)
 
-  # Verifica se há saída do comando
+  # hecks if there is output from the command.
   if [ -z "$command_output" ]; then
     echo -e "${GRAY}Sem saída para o comando.${NC}"
   else
     echo "$command_output"  # Exibe a saída do comando
   fi
 
-  # Adiciona uma linha em branco após a execução de cada bloco
+  # Adds a blank line after the execution of each block.
   echo ""
 done
