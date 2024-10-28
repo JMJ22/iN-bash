@@ -37,6 +37,7 @@ free -m
 
 Running iN-bash
 Execution with a list of commands: To run a list of commands defined in the 2dos file, simply execute:
+chmod +x run
 ./run
 
 Execution of a single command: If there is a need to run a specific command, just pass it as an argument to the run script, without the need to modify internal files:
