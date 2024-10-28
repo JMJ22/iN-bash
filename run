@@ -38,7 +38,7 @@ for ip in "${ips[@]}"; do
   ")
 
   # Displays the header
-  hostname_remote=$(echo "$output" | head -n 1)  # A primeira linha da saída é o hostname
+  hostname_remote=$(echo "$output" | head -n 1)  # The first line of the output is the hostname.
   echo -e "${GREEN}-----------------------------------[ $hostname_remote - $ip ]-----------------------------------${NC}"
   echo ""
 
