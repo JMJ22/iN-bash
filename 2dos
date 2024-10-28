@@ -1,18 +1,4 @@
-#groupadd -g 666 divino_bosta
-#useradd -u 111 -g 666 -m -s /bin/bash tuiuiu
-#echo "tuiuiu:123456@" | chpasswd
-#echo""
-#echo "group"
-#cat /etc/group | grep divino_bosta
-#echo""
-#echo "ID-User"
-#id tuiuiu
-
-#userdel -r tuiuiu
-#groupdel divino_bosta
-
-echo "group"
-cat /etc/group | grep divino_bosta
-echo""
-echo "ID-User"
-id tuiuiu
+#Just an example:
+date
+nproc
+free -m
