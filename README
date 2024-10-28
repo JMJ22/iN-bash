@@ -1,0 +1,43 @@
+How does iN-bash work?
+
+The structure of iN-bash is based on simplicity and ease of adaptation. With just three files, any administrator can quickly start using it and adjust it as needed.
+
+Main files:
+
+target: Lists the IPs of the servers where commands will be executed remotely.
+user: Specifies the user that will be used for SSH connections.
+2dos: A file where you list the commands that will be executed sequentially on each server.
+
+================================================================================================================
+
+target: It should contain the list of IP addresses of the servers where the configurations will be executed.
+
+Example:
+192.0.2.1
+198.51.100.2
+203.0.113.3
+
+================================================================================================================
+
+user: Specifies the name of the user that will be used for the SSH connection
+
+Example:
+root
+
+================================================================================================================
+
+2dos: It should contain the list of commands you need to execute on the servers.
+
+Example:
+date
+nproc
+free -m
+
+================================================================================================================
+
+Running iN-bash
+Execution with a list of commands: To run a list of commands defined in the 2dos file, simply execute:
+./run
+
+Execution of a single command: If there is a need to run a specific command, just pass it as an argument to the run script, without the need to modify internal files:
+./run "whoami"
