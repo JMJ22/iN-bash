@@ -47,7 +47,7 @@ for ip in "${ips[@]}"; do
 
   # hecks if there is output from the command.
   if [ -z "$command_output" ]; then
-    echo -e "${GRAY}Sem saída para o comando.${NC}"
+    echo -e "${GRAY}No output from the command.${NC}"
   else
     echo "$command_output"  # Exibe a saída do comando
   fi
